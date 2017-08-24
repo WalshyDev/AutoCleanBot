@@ -1,0 +1,12 @@
+{
+  "bot": {
+    "token": "botToken",
+    "prefix": "!"
+  },
+  "mysql": {
+    "username": "root",
+    "password": "",
+    "host": "localhost",
+    "database": "autocleanbot"
+  }
+}
