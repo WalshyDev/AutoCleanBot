@@ -12,7 +12,9 @@ Automatically clean a channel in DIscord
 * Run the bot!
 
 # Download
-I have uploaded the bot and example config to Dropbox, you can download it here: https://www.dropbox.com/s/pchdiiy6vx9x6lv/AutoCleanBot.zip?dl=0
+I have uploaded the bot and example config to GitHub and Dropbox for you to download.
+GitHub: https://github.com/WalshyDev/AutoCleanBot/releases
+Dropbox: https://www.dropbox.com/s/zwp10dbdfbcwqj0/AutoCleanBot.zip?dl=0
 
 # Commands
 !clean \[y\] - Cleans the channel you executed the command in, **wont clean pins unless y is passed**.  
