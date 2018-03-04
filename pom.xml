@@ -10,15 +10,15 @@
 
     <repositories>
         <repository>
-            <id>JBA-mvn-repo</id>
-            <url>https://raw.github.com/WalshyDev/JBA/mvn-repo/</url>
+            <id>jitpack</id>
+            <url>https://jitpack.io/</url>
         </repository>
     </repositories>
     <dependencies>
         <dependency>
-            <groupId>com.walshydev.jba</groupId>
+            <groupId>com.github.WalshyDev</groupId>
             <artifactId>JBA</artifactId>
-            <version>1.2</version>
+            <version>1.3</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
