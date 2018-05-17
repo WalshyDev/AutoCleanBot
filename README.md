@@ -8,7 +8,7 @@ Automatically clean a channel in DIscord
 
 # Setup
 * Make an application, turn it into a bot account and get the token, put that in the config.json
-* Create a MySQL database for the bot. Put the database name and other details in the config.json
+* Create a MySQL database for the bot (`CREATE DATABASE autocleanbot`). Put the database name and other details in the config.json
 * Run the bot!
 
 # Download
