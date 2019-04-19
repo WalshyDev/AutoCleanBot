@@ -6,12 +6,12 @@ import com.walshydev.jba.Config;
 import com.walshydev.jba.JBA;
 import com.walshydev.jba.SQLController;
 import com.walshydev.jba.scheduler.JBATask;
-import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageHistory;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.api.AccountType;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageHistory;
+import net.dv8tion.jda.api.entities.TextChannel;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -97,7 +97,7 @@ public class AutoCleanBot extends JBA {
         List<Message> toDelete = new ArrayList<>();
         for (Message m : history.getRetrievedHistory()) {
             if (m.isPinned() && !deletePins) continue;
-            if (m.getCreationTime().plusWeeks(2).isAfter(OffsetDateTime.now())) {
+            if (m.getTimeCreated().plusWeeks(2).isAfter(OffsetDateTime.now())) {
                 i++;
                 toDelete.add(m);
             } else
