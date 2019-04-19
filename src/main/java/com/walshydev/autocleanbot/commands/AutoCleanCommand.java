@@ -19,10 +19,12 @@ import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
+import javax.annotation.Nullable;
 import java.awt.Color;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.regex.Pattern;
 
 public class AutoCleanCommand implements Command {
 
@@ -32,6 +34,8 @@ public class AutoCleanCommand implements Command {
         .appendMinutes().appendSuffix("m")
         .appendSeconds().appendSuffix("s")
         .toFormatter();
+
+    private final Pattern channelMention = Pattern.compile("(<#)?\\d{18,22}>?");
 
     private PreparedStatement queryTasks;
     private PreparedStatement insertTask;
@@ -68,23 +72,36 @@ public class AutoCleanCommand implements Command {
                                 .append(set.getString("channel_id"))
                                 .append(") - ")
                                 .append("`")
-                                .append(set.getLong("clean_schedule"))
-                                .append("ms` (Clear pins: ")
+                                .append(formatter.print(new Period(set.getLong("clean_schedule"))))
+                                .append("` (Clear pins: ")
                                 .append(set.getBoolean("clear_pins"))
                                 .append(")\n");
                         }
                     });
                 } catch (SQLException e) {
+                    messageChannel.sendMessage(new EmbedBuilder()
+                        .setColor(Color.red)
+                        .setDescription("Something bad happened!\n" + e.getMessage())
+                        .build())
+                        .queue();
                     JBA.LOGGER.error("Failed to list tasks!", e);
+                    return;
                 }
                 messageChannel.sendMessage(new EmbedBuilder()
                     .setDescription("**AutoClean schuled tasks**\n" + sb.toString()).build())
                     .queue();
             } else if (args.length == 2 || args.length == 3) {
                 if (args[0].equalsIgnoreCase("remove")) {
-                    if (message.getMentionedChannels().isEmpty()) return;
+                    TextChannel tc = getChannel(message, args[1]);
+                    if (tc == null) {
+                        messageChannel.sendMessage(new EmbedBuilder()
+                            .setColor(Color.red)
+                            .setDescription("Invalid channel! Please use the ID or mention it")
+                            .build())
+                            .queue();
+                        return;
+                    }
 
-                    TextChannel tc = message.getMentionedChannels().get(0);
                     if (tc.getGuild().getId().equals(message.getGuild().getId())) {
                         Scheduler.cancelTask(tc.getId());
                         try {
@@ -114,8 +131,16 @@ public class AutoCleanCommand implements Command {
                     return;
                 }
 
-                if (message.getMentionedChannels().isEmpty()) return;
-                TextChannel tc = message.getMentionedChannels().get(0);
+                TextChannel tc = getChannel(message, args[0]);
+                if (tc == null) {
+                    messageChannel.sendMessage(new EmbedBuilder()
+                        .setColor(Color.red)
+                        .setDescription("Invalid channel! Please use the ID or mention it")
+                        .build())
+                        .queue();
+                    return;
+                }
+
                 if (tc.getGuild().getId().equals(message.getGuild().getId())) {
                     Period p = formatter.parsePeriod(args[1]);
 
@@ -133,6 +158,7 @@ public class AutoCleanCommand implements Command {
                             || args[2].equalsIgnoreCase("yes")
                             || args[2].equalsIgnoreCase("true")
                     ));
+
                     try {
                         SQLController.runSqlTask(connection -> {
                             if (insertTask == null)
@@ -202,5 +228,17 @@ public class AutoCleanCommand implements Command {
     @Override
     public String getDescription() {
         return "Setup an automatic clean for a channel.";
+    }
+
+    @Nullable
+    private TextChannel getChannel(Message message, String arg) {
+        if (channelMention.matcher(arg).matches()) {
+            return message.getGuild().getTextChannelById(
+                arg.replaceAll("[<#>]", "")
+            );
+        } else
+            return message.getMentionedChannels().size() > 0
+                ? message.getMentionedChannels().get(0)
+                : null;
     }
 }

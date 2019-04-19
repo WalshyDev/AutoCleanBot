@@ -19,7 +19,7 @@
         <dependency>
             <groupId>com.github.WalshyDev</groupId>
             <artifactId>JBA</artifactId>
-            <version>0115c90835</version>
+            <version>0ad2c54594</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
